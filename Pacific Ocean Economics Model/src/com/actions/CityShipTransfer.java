@@ -1,7 +1,6 @@
 package com.actions;
 
-import com.actions.Transfer;
-import com.application.Shuttle;
+import com.ship.Shuttle;
 import com.locations.City;
 
 public class CityShipTransfer implements Transfer {
@@ -14,13 +13,13 @@ public class CityShipTransfer implements Transfer {
         if(isExecuted){
             return;
         }
-        giver.setMaterials(giver.getMaterials() - this.cargo);
+        giver.setCargoWeight(giver.getCargoWeight() - this.cargo);
         receiver.setCargoWeight(receiver.getCargoWeight() + this.cargo);
         System.out.println("Місто " + giver.getName() + " передало " + this.cargo + " об'єкту " + receiver.getName());
         isExecuted = true;
     }
     public CityShipTransfer(City giver, Shuttle reciever, double cargo) {
-        if(giver.getMaterials() < cargo || (reciever.getCapacity() - reciever.getCargoWeight()) < cargo) {
+        if(giver.getCargoWeight() < cargo || (reciever.getCapacity() - reciever.getCargoWeight()) < cargo) {
             System.out.println("Impossible deal.");
             isExecuted = true;
             return;

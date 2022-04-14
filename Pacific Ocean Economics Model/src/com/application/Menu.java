@@ -5,6 +5,9 @@ import com.actions.ShipCityTransfer;
 import com.actions.ShipTransfer;
 import com.locations.City;
 import com.locations.PacificOcean;
+import com.ship.Balker;
+import com.ship.ContainerShip;
+import com.ship.Shuttle;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -135,7 +138,7 @@ public class Menu {
                           .stream()
                           .sorted(Comparator.comparing(City::getName))
                           .forEach(city -> {
-                              System.out.println(city.getName() + " " + city.getMaterials());
+                              System.out.println(city.getName() + " " + city.getCargoWeight());
                               Iterator<? extends Shuttle> it = city.getShipsOnParking().iterator();
                               while(it.hasNext()) {
                                   System.out.println("\t" + it.next());
@@ -318,12 +321,12 @@ public class Menu {
                 .filter(city -> city != city1)
                 .findAny().get();
 
-        while(city1.getMaterials() != 0) {
+        while(city1.getCargoWeight() != 0) {
             PacificOcean.getPacificOcean().getShipList()
                     .forEach( shuttle -> {
                             shuttle.moveTo(city1);
                             new CityShipTransfer(city1,shuttle,
-                                    (shuttle.getCapacity() < city1.getMaterials())? shuttle.getCapacity(): city1.getMaterials()).start();
+                                    (shuttle.getCapacity() < city1.getCargoWeight())? shuttle.getCapacity(): city1.getCargoWeight()).start();
                             shuttle.moveTo(city2);
                             new ShipCityTransfer(shuttle,city2,shuttle.getCargoWeight()).start();
                     });

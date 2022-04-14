@@ -1,6 +1,6 @@
 package com.actions;
 
-import com.application.Shuttle;
+import com.ship.Shuttle;
 import com.locations.City;
 
 public class ShipCityTransfer implements Transfer{
@@ -14,7 +14,7 @@ public class ShipCityTransfer implements Transfer{
             return;
         }
         giver.setCargoWeight(giver.getCargoWeight() - this.cargo);
-        receiver.setMaterials(receiver.getMaterials() + this.cargo);
+        receiver.setCargoWeight(receiver.getCargoWeight() + this.cargo);
         System.out.println("Корабель " + giver.getName() + " передав " + this.cargo + " місту " + receiver.getName());
         isExecuted = true;
     }

@@ -1,6 +1,6 @@
 package com.locations;
 
-import com.application.Shuttle;
+import com.ship.Shuttle;
 
 import java.util.*;
 
@@ -10,8 +10,9 @@ public class City implements Cloneable,Comparable<City>{
    private final String name;
    private  LocationType cityType;
    private  Size citySize;
-   private double materials = 1000;
-   private Queue<Shuttle> shipsOnParking = new ArrayDeque<>();
+   private CargoType cargoType;
+   private double cargoWeight = 1000;
+   private final List<Shuttle> shipsOnParking = new ArrayList<>();
    ///
    public boolean addShip(Shuttle s) {
       return shipsOnParking.add(s);
@@ -20,6 +21,7 @@ public class City implements Cloneable,Comparable<City>{
    public boolean deleteShip(Shuttle s){
       return shipsOnParking.remove(s);
    }
+
    public String getName() {
       return name;
    }
@@ -32,16 +34,15 @@ public class City implements Cloneable,Comparable<City>{
       return citySize;
    }
 
-   public double getMaterials() {
-      return materials;
+   public double getCargoWeight() {
+      return cargoWeight;
    }
 
-   public void setMaterials(double materials) {
-      this.materials = materials;
+   public void setCargoWeight(double cargoWeight) {
+      this.cargoWeight = cargoWeight;
    }
 
-
-   public Queue<? extends Shuttle> getShipsOnParking() {
+   public List<? extends Shuttle> getShipsOnParking() {
       return shipsOnParking;
    }
 
@@ -92,15 +93,15 @@ public class City implements Cloneable,Comparable<City>{
       if (this == o) return true;
       if (!(o instanceof City)) return false;
       City city = (City) o;
-      return Double.compare(city.getMaterials(),
-              getMaterials()) == 0 && Objects.equals(getName(),
+      return Double.compare(city.getCargoWeight(),
+              getCargoWeight()) == 0 && Objects.equals(getName(),
               city.getName()) && getCityType() == city.getCityType() && getCitySize() == city.getCitySize() && Objects.equals(getShipsOnParking(),
               city.getShipsOnParking());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(getName(), getCityType(), getCitySize(), getMaterials(), getShipsOnParking());
+      return Objects.hash(getName(), getCityType(), getCitySize(), getCargoWeight(), getShipsOnParking());
    }
 
    @Override

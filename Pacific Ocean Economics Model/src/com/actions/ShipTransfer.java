@@ -1,6 +1,6 @@
 package com.actions;
 
-import com.application.Balker;
+import com.ship.Balker;
 
 public class ShipTransfer implements Transfer {
     private Balker giver;
