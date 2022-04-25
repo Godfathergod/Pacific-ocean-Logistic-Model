@@ -21,6 +21,7 @@ public class PacificOcean {
     public void deleteShip(Shuttle sh) {
         shuttleList.remove(sh);
     }
+
     public List<City> getAllCities() {
         return allCities;
     }

@@ -1,0 +1,38 @@
+
+
+                                                       /* CSS */
+                                                   .button-63 {
+                                                       -fx-align-items: center;
+                                                       -fx-background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+                                                       -fx-border: 0;
+                                                       -fx-border-radius: 8px;
+                                                       -fx-box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+                                                       -fx-box-sizing: border-box;
+                                                       -fx-color: #FFFFFF;
+                                                       -fx-display: flex;
+                                                       -fx-font-family: Phantomsans, sans-serif;
+                                                       -fx-font-size: 20px;
+                                                       -fx-justify-content: center;
+                                                       -fx-line-height: 1em;
+                                                       -fx-max-width: 100%;
+                                                       -fx-min-width: 140px;
+                                                       -fx-padding: 19px 24px;
+                                                       -fx-text-decoration: none;
+                                                       -fx-user-select: none;
+                                                       -fx-webkit-user-select: none;
+                                                       -fx-touch-action: manipulation;
+                                                       -fx-white-space: nowrap;
+                                                       -fx-cursor: pointer;
+                                                   }
+
+.button-63:active,
+.button-63:hover {
+    outline: 0;
+}
+
+@media (min-width: 768px) {
+    .button-63 {
+        -fx-font-size: 24px;
+        -fx-min-width: 196px;
+    }
+}
