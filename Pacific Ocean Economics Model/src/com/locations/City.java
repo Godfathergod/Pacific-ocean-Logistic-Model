@@ -13,7 +13,10 @@ public class City implements Cloneable,Comparable<City>{
    private CargoType cargoType;
    private double cargoWeight = 1000;
    private final List<Shuttle> shipsOnParking = new ArrayList<>();
+   private double mapX;
+   private double mapY;
    ///
+
    public boolean addShip(Shuttle s) {
       return shipsOnParking.add(s);
    }
@@ -49,31 +52,50 @@ public class City implements Cloneable,Comparable<City>{
    public static List<City> getAllCities() {
       return allCities;
    }
+
+   public CargoType getCargoType() {
+      return cargoType;
+   }
+
+   public double getMapX() {
+      return mapX;
+   }
+
+   public double getMapY() {
+      return mapY;
+   }
    ///
 
    static {
-      allCities = List.of(new City("Владивосток",LocationType.MATERIALBASE,Size.SMALL),
-              new City("Пусан",LocationType.FACTORY,Size.MEDIUM),
-              new City("Токіо",LocationType.FACTORY,Size.LARGE),
-              new City("Шанхай",LocationType.FACTORY,Size.LARGE),
-              new City("Тайбей",LocationType.FACTORY,Size.SMALL),
-              new City("Гуанчжоу",LocationType.MATERIALBASE,Size.LARGE),
-              new City("Брісбен",LocationType.MATERIALBASE,Size.SMALL),
-              new City("Сідней",LocationType.CITYCONSUMER,Size.LARGE),
-              new City("Веллінгтон",LocationType.CITYCONSUMER,Size.SMALL),
-              new City("Пуерто-Монт",LocationType.MATERIALBASE,Size.SMALL),
-              new City("Ліма",LocationType.MATERIALBASE,Size.LARGE),
-              new City("Гуаякіль", LocationType.CITYCONSUMER,Size.MEDIUM),
-              new City("Панама",LocationType.FACTORY,Size.SMALL),
-              new City("Лос-Анджелес",LocationType.CITYCONSUMER,Size.LARGE),
-              new City("Сан-Франциско",LocationType.CITYCONSUMER,Size.LARGE),
-              new City("Анкорідж",LocationType.MATERIALBASE,Size.MEDIUM));
+      allCities = List.of(new City("Владивосток",LocationType.MATERIALBASE,Size.SMALL,412,725),
+              new City("Пусан",LocationType.FACTORY,Size.MEDIUM,330,875),
+              new City("Токіо",LocationType.FACTORY,Size.LARGE,580,900),
+              new City("Шанхай",LocationType.FACTORY,Size.LARGE,215,985),
+              new City("Тайбей",LocationType.FACTORY,Size.SMALL,225,1165),
+              new City("Гуанчжоу",LocationType.MATERIALBASE,Size.LARGE,40,1200),
+              new City("Брісбен",LocationType.MATERIALBASE,Size.SMALL,770,2050),
+              new City("Сідней",LocationType.CITYCONSUMER,Size.LARGE,745,2270),
+              new City("Веллінгтон",LocationType.CITYCONSUMER,Size.SMALL,1170,2300),
+              new City("Пуерто-Монт",LocationType.MATERIALBASE,Size.SMALL,3100,2375),
+              new City("Ліма",LocationType.MATERIALBASE,Size.LARGE,3075,1850),
+              new City("Гуаякіль", LocationType.CITYCONSUMER,Size.MEDIUM,2975,1650),
+              new City("Панама",LocationType.FACTORY,Size.SMALL,3000,1430),
+              new City("Лос-Анджелес",LocationType.CITYCONSUMER,Size.LARGE,2275,950),
+              new City("Сан-Франциско",LocationType.CITYCONSUMER,Size.LARGE,2230,800),
+              new City("Анкорідж",LocationType.MATERIALBASE,Size.MEDIUM,1775,275));
    }
-
+   private City(String name,LocationType type,Size size,double x, double y){
+      this.name = name;
+      this.cityType = type;
+      this.citySize = size;
+      this.mapX = x;
+      this.mapY = y;
+   }
    private City(String name,LocationType type,Size size){
       this.name = name;
       this.cityType = type;
       this.citySize = size;
+
    }
    public City(String name){
       this.name = name;

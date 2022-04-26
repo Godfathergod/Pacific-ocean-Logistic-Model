@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="660.0" prefWidth="804.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
+<AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane hbarPolicy="ALWAYS" hvalue="0.5" layoutY="26.0" minHeight="260.0" minWidth="359.0" prefHeight="489.0" prefWidth="814.0" vbarPolicy="ALWAYS" vvalue="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <AnchorPane>
+               <children>
+                  <ParallelCamera AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+         </content>
+      </ScrollPane>
+      <MenuBar prefHeight="26.0" prefWidth="814.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -24,12 +35,27 @@
           </Menu>
         </menus>
       </MenuBar>
-   </top>
-   <center>
-      <ScrollPane prefHeight="660.0" prefWidth="804.0" BorderPane.alignment="CENTER">
-         <content>
-            <AnchorPane prefHeight="1320.0" prefWidth="1608.0" />
-         </content>
-      </ScrollPane>
-   </center>
-</BorderPane>
+      <VBox layoutX="1.0" layoutY="26.0" prefHeight="174.0" prefWidth="493.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="26.0">
+         <children>
+            <Label fx:id="shipCounter" prefHeight="38.0" prefWidth="489.0" text="Кількість кораблів в океані: ">
+               <font>
+                  <Font name="Cambria" size="30.0" />
+               </font>
+            </Label>
+            <Label fx:id="cargoCounter" prefHeight="38.0" prefWidth="482.0" text="Вага вантажу в океані:">
+               <font>
+                  <Font name="Cambria" size="30.0" />
+               </font>
+            </Label>
+            <Label prefHeight="39.0" prefWidth="481.0" text="Label">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets left="25.0" top="25.0" />
+         </opaqueInsets>
+      </VBox>
+   </children>
+</AnchorPane>
