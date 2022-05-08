@@ -11,18 +11,39 @@ public class City implements Cloneable,Comparable<City>{
    private  LocationType cityType;
    private  Size citySize;
    private CargoType cargoType;
-   private double cargoWeight = 1000;
+   private double materialsWeight = 1000;
+   private double productionWeight = 1000;
    private final List<Shuttle> shipsOnParking = new ArrayList<>();
    private double mapX;
    private double mapY;
    ///
 
-   public boolean addShip(Shuttle s) {
-      return shipsOnParking.add(s);
+   public void addShip(Shuttle s) {
+      shipsOnParking.add(s);
    }
 
-   public boolean deleteShip(Shuttle s){
-      return shipsOnParking.remove(s);
+   public void deleteShip(Shuttle s){
+         shipsOnParking.remove(s);
+   }
+
+   public void setCityType(LocationType cityType) {
+      this.cityType = cityType;
+   }
+
+   public double getMaterialsWeight() {
+      return materialsWeight;
+   }
+
+   public void setMaterialsWeight(double materialsWeight) {
+      this.materialsWeight = materialsWeight;
+   }
+
+   public double getProductionWeight() {
+      return productionWeight;
+   }
+
+   public void setProductionWeight(double productionWeight) {
+      this.productionWeight = productionWeight;
    }
 
    public String getName() {
@@ -38,11 +59,11 @@ public class City implements Cloneable,Comparable<City>{
    }
 
    public double getCargoWeight() {
-      return cargoWeight;
+      return materialsWeight;
    }
 
    public void setCargoWeight(double cargoWeight) {
-      this.cargoWeight = cargoWeight;
+      this.materialsWeight = cargoWeight;
    }
 
    public List<? extends Shuttle> getShipsOnParking() {
@@ -63,6 +84,38 @@ public class City implements Cloneable,Comparable<City>{
 
    public double getMapY() {
       return mapY;
+   }
+   public void gainShip(Shuttle shuttle,double cargo){
+      while(materialsWeight < cargo){
+         try {
+            Thread.sleep(1000);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
+      if(shuttle.getCargoType() == CargoType.NONE) {
+         shuttle.setCargoType(this.getCargoType());
+      } else if(this.cargoType != shuttle.getCargoType()){
+         throw new UnsupportedOperationException("Difference between cargoType property");
+      }
+      if(shuttle.getCapacity() - shuttle.getCargoWeight() - cargo < 0) {
+         materialsWeight -= shuttle.getCapacity() - shuttle.getCargoWeight();
+         shuttle.setCargoWeight(shuttle.getCargoWeight() + shuttle.getCapacity() - shuttle.getCargoWeight());
+         return;
+      }
+      materialsWeight -= cargo;
+      shuttle.setCargoWeight(shuttle.getCargoWeight() + cargo);
+   }
+   public void ungainShip(Shuttle shuttle,double cargo){
+
+      if(shuttle.getCargoWeight() - cargo < 0) {
+         materialsWeight += shuttle.getCargoWeight() - cargo;
+         shuttle.setCargoWeight(0);
+         shuttle.setCargoType(CargoType.NONE);
+         return;
+      }
+      materialsWeight += cargo;
+      shuttle.setCargoWeight(shuttle.getCargoWeight() - cargo);
    }
    ///
 
@@ -90,15 +143,11 @@ public class City implements Cloneable,Comparable<City>{
       this.citySize = size;
       this.mapX = x;
       this.mapY = y;
-   }
-   private City(String name,LocationType type,Size size){
-      this.name = name;
-      this.cityType = type;
-      this.citySize = size;
-
-   }
-   public City(String name){
-      this.name = name;
+      if(cityType == LocationType.MATERIALBASE){
+         this.cargoType = CargoType.MATERIALS;
+      } else {
+         this.cargoType = CargoType.PRODUCTION;
+      }
    }
    //////
    @Override

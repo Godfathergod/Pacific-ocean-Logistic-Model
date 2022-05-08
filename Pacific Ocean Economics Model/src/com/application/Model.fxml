@@ -4,13 +4,14 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ScrollPane hbarPolicy="ALWAYS" hvalue="0.5" layoutY="26.0" minHeight="260.0" minWidth="359.0" prefHeight="489.0" prefWidth="814.0" vbarPolicy="ALWAYS" vvalue="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane hbarPolicy="ALWAYS" hvalue="0.5" layoutY="1.0" minHeight="260.0" minWidth="359.0" prefHeight="490.0" prefWidth="1594.0" vbarPolicy="ALWAYS" vvalue="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-15.0" AnchorPane.topAnchor="1.0">
          <content>
-            <AnchorPane>
+            <AnchorPane minWidth="-Infinity" prefWidth="3225.0">
                <children>
                   <ParallelCamera AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
@@ -57,5 +58,10 @@
             <Insets left="25.0" top="25.0" />
          </opaqueInsets>
       </VBox>
+      <AnchorPane layoutX="1335.0" layoutY="27.0" prefHeight="187.0" prefWidth="243.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="187.0" stroke="BLACK" strokeType="INSIDE" width="243.0" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

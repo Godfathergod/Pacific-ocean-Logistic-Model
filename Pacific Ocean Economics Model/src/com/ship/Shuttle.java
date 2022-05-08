@@ -9,7 +9,7 @@ import java.util.*;
 public class Shuttle implements Cloneable, Comparable<Shuttle>{
     private static int numberOfShips;
     private static double totalCargoWeight;
-    protected final static int maxExp = 100;
+    protected static int maxExp = 100;
 
     public static int getNumberOfShips() {
         return numberOfShips;
@@ -21,13 +21,15 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
 
     private String name;
     private final int capacity;
-    private final int weight;
+    protected final int weight;
     private double cargoWeight;
     private CargoType cargoType;
     private int experience;
     private City baseCity;
     private City parkingCity;
     private Engine engine;
+    protected double shipX;
+    protected double shipY;
 
     static {
         numberOfShips = 0;
@@ -35,12 +37,37 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     }
 
     {
+        cargoType = CargoType.NONE;
         experience = 0;
         cargoWeight = 0;
-        engine = new Engine(rand.nextInt(5,10),100);
+        engine = new Engine(rand.nextInt(1,Engine.maxSpeed+1));
     }
 
     //геттери та сеттери
+
+    public CargoType getCargoType() {
+        return cargoType;
+    }
+
+    public void setCargoType(CargoType cargoType) {
+        this.cargoType = cargoType;
+    }
+
+    public double getShipX() {
+        return shipX;
+    }
+
+    public void setShipX(double shipX) {
+        this.shipX = shipX;
+    }
+
+    public double getShipY() {
+        return shipY;
+    }
+
+    public void setShipY(double shipY) {
+        this.shipY = shipY;
+    }
 
     public City getParkingCity() {
         return parkingCity;
@@ -52,10 +79,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public double getCargoWeight() {
@@ -74,10 +97,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         return experience;
     }
 
-    public void setExperience(int experience) {
-        this.experience = experience;
-    }
-
     //геттери для фіналізованих
     public City getBaseCity() {
         return baseCity;
@@ -87,9 +106,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         return capacity;
     }
 
-    public int getWeight() {
-        return weight;
-    }
     //конструктори
     public Shuttle(String name, int capacity, int weight, City baseCity) {
         this.name = name;
@@ -111,6 +127,13 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
             this.stayInCity(City.getAllCities()
                     .get(rand.nextInt(City.getAllCities().size())));
         }
+        if (parkingCity == null){
+            setShipX(rand.nextInt(415,3100));
+            setShipY(rand.nextInt(275,2250));
+        } else{
+            setShipY(parkingCity.getMapY());
+            setShipX((parkingCity.getMapX()));
+        }
     }
 //вивід об'єкта на екран
     public void print() {
@@ -118,31 +141,121 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     }
     //функції життєдіяльності об'єкта
     public void automaticLife() {
+        new Thread(() -> {
+            while(experience != maxExp){
+                moveTo(findMaxCargoCity());
+                gain();
+                switch (this.getCargoType()){
+                    case MATERIALS -> {
+                        moveTo(findMinCargoCity(LocationType.FACTORY));
+                        ungain();
+                    }
+                    case PRODUCTION -> {
+                        moveTo((findMinCargoCity(LocationType.CITYCONSUMER)));
+                        ungain();
+                    }
+                }
+
+            }
+        }).start();
 
     }
     public void moveTo(City city){
-        try {
             leaveCity(this.parkingCity);
-        }catch (NullPointerException ignored){}
-       stayInCity(city);
+         while(!(this.getShipX() < city.getMapX()+20 && this.getShipX() > city.getMapX()-20
+                 && this.getShipY() < city.getMapY()+20 && this.getShipY() > city.getMapY()-20)) {
+             if(this.getShipX() < city.getMapX()+10){
+                 this.shipX += engine.getSpeed() * 0.1;
+             } else if(this.getShipX() > city.getMapX()-10){
+                 this.shipX -= engine.getSpeed() * 0.1;
+             }
+             if(this.getShipY() < city.getMapY()+10){
+                 this.shipY += engine.getSpeed() * 0.1;
+             } else if(this.getShipY() > city.getMapY()-10){
+                 this.shipY -= engine.getSpeed() * 0.1;
+             }
+             try {
+                 Thread.sleep(10);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         }
+         stayInCity(city);
     }
-    public void findOrder() {
-        //пошук міста з найбільшою кількістю матеріалів та відправлення на загрузку в те місто
-            City aimCity = City.getAllCities()
+    public City findMaxCargoCity() {
+        //пошук міста з найбільшою кількістю вантажу
+            return City.getAllCities()
                     .stream()
-                    .filter((city) ->  city.getCityType() == LocationType.MATERIALBASE)
+                    .filter(city -> city.getCityType() != LocationType.CITYCONSUMER)
                     .max((c1,c2) -> (int) (c1.getCargoWeight() - c2.getCargoWeight())).get();
-        moveTo(aimCity);
+    }
+    public City findMaxCargoCity(LocationType type) {
+        //пошук міста з найбільшою кількістю вантажу за типом міста
+        return City.getAllCities()
+                .stream()
+                .filter(city -> city.getCityType() == type)
+                .max((c1,c2) -> (int) (c1.getCargoWeight() - c2.getCargoWeight())).get();
+    }
+    public City findMinCargoCity() {
+        //пошук міста з найменшою кількістю вантажу
+        return City.getAllCities()
+                .stream()
+                .min((c1,c2) -> (int) (c1.getCargoWeight() - c2.getCargoWeight())).get();
+    }
+    public City findMinCargoCity(LocationType type) {
+        //пошук міста з найменшою кількістю вантажу за типом міста
+        return City.getAllCities()
+                .stream()
+                .filter(city -> city.getCityType() == type && city.getCargoWeight() < 100)
+                .findAny().get();
     }
     public void stayInCity(City city){
         city.addShip(this);
         parkingCity = city;
         System.out.println(this.getName() + " прибув до " + city);
     }
-    public void leaveCity(City city) throws NullPointerException{
-        city.deleteShip(this);
+    public void leaveCity(City city){
+        try{
+            city.deleteShip(this);
+        }catch (NullPointerException ignored){
+
+        }
         parkingCity = null;
         System.out.println(this.getName() + " покинув " + city);
+    }
+    public void gain(){
+        if(parkingCity == null){
+            return;
+        }
+           while(cargoWeight != capacity || parkingCity.getCargoWeight() < 10){
+               try {
+                   parkingCity.gainShip(this,25);
+               } catch (UnsupportedOperationException e) {
+                   System.out.println("AAAAAAAAAAAAAA");
+               }
+               try {
+                   Thread.sleep(100);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+           }
+    }
+    public void ungain(){
+        if(parkingCity == null){
+            return;
+        }
+        while(cargoWeight != 0 && parkingCity.getCargoWeight() < 2000){
+            try {
+                parkingCity.ungainShip(this,25);
+            } catch (UnsupportedOperationException e) {
+                System.out.println("AAAAAAAAAAAAAA");
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
     //базові функції Object
     @Override
@@ -163,7 +276,7 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         return "Shuttle{" +
                 "name='" + getName() + '\'' +
                 ", capacity=" + getCapacity() +
-                ", weight=" + getWeight() +
+                ", weight=" + weight +
                 ", cargoWeight=" + getCargoWeight() +
                 ", experience=" + getExperience() +
                 '}';
@@ -173,7 +286,7 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     public Shuttle clone() {
         try {
             Shuttle ret = (Shuttle) super.clone();
-            ret.baseCity = this.baseCity.clone();
+            ret.engine = this.engine.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -217,12 +330,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         @Override
         public int compare(Shuttle o1, Shuttle o2) {
             return o1.getCapacity() - o2.getCapacity();
-        }
-    }
-    static class ComparingByWeight implements Comparator<Shuttle> {
-        @Override
-        public int compare(Shuttle o1, Shuttle o2) {
-            return o1.getWeight() - o2.getWeight();
         }
     }
     static class ComparingByCargoWeight implements Comparator<Shuttle> {

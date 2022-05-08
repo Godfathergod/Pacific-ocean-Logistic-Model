@@ -1,13 +1,12 @@
 package com.actions;
 
-import com.ship.Balker;
+import com.ship.Bulker;
 
-public class ShipTransfer implements Transfer {
-    private Balker giver;
-    private Balker receiver;
+public class ShipTransfer {
+    private Bulker giver;
+    private Bulker receiver;
     private double cargo;
     private boolean isExecuted = false;
-    @Override
     public void start() {
         if(isExecuted){
             return;
@@ -17,7 +16,7 @@ public class ShipTransfer implements Transfer {
         System.out.println(giver.getName() + " передав " + this.cargo + " об'єкту " + receiver.getName());
         isExecuted = true;
     }
-    public ShipTransfer(Balker giver, Balker reciever, double cargo) {
+    public ShipTransfer(Bulker giver, Bulker reciever, double cargo) {
         if(giver.getCargoWeight() < cargo || (reciever.getCapacity() - reciever.getCargoWeight()) < cargo) {
             System.out.println("Impossible deal.");
             isExecuted = true;

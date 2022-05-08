@@ -3,14 +3,22 @@ package com.ship;
 import com.actions.ShipTransfer;
 import com.locations.City;
 
-public class Balker extends Shuttle {
-    public Balker(String name, int capacity, int weight, City baseCity) {
+public class Bulker extends Shuttle {
+    private static int numOfBulkers;
+
+    public static int getNumOfBulkers() {
+        return numOfBulkers;
+    }
+
+    public Bulker(String name, int capacity, int weight, City baseCity) {
         super(name, capacity, weight, baseCity);
+        ++numOfBulkers;
     }
-    public Balker(){
+    public Bulker(){
         super();
+        ++numOfBulkers;
     }
-    public void exChangeWithShip(Balker ship,double cargo) {
+    public void exChangeWithShip(Bulker ship, double cargo) {
         new ShipTransfer(this,ship,cargo).start();
     }
     @Override
@@ -18,7 +26,7 @@ public class Balker extends Shuttle {
         return "Balker{" +
                 "name='" + super.getName() + '\'' +
                 ", capacity=" + super.getCapacity() +
-                ", weight=" + super.getWeight() +
+                ", weight=" + weight +
                 ", cargoWeight=" + super.getCargoWeight() +
                 ", experience=" + super.getExperience() +
                 '}';

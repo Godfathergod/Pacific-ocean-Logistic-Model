@@ -1,11 +1,9 @@
 package com.application;
 
-import com.actions.CityShipTransfer;
-import com.actions.ShipCityTransfer;
 import com.actions.ShipTransfer;
 import com.locations.City;
 import com.locations.PacificOcean;
-import com.ship.Balker;
+import com.ship.Bulker;
 import com.ship.ContainerShip;
 import com.ship.Shuttle;
 
@@ -15,7 +13,7 @@ import java.util.regex.Pattern;
 public class Menu {
     private final Scanner scan = new Scanner(System.in);
 
-    public void start() {
+   /* public void start() {
         boolean isMenuOn = true;
         System.out.println("""
                 1.Додати мікрооб’єкт.
@@ -66,7 +64,7 @@ public class Menu {
                                         break;
                                     case 2:
                                         try{
-                                            temp = new Balker(name,
+                                            temp = new Bulker(name,
                                                     Integer.parseInt(parameters[0]),
                                                     Integer.parseInt(parameters[1]),
                                                     City.getAllCities().stream()
@@ -123,7 +121,7 @@ public class Menu {
                                     new Shuttle();
                                     break;
                                 case 2:
-                                    new Balker();
+                                    new Bulker();
                                     break;
                                 case 3:
                                     new ContainerShip();
@@ -249,16 +247,16 @@ public class Menu {
         scan.nextLine();
         switch (userInt){
             case 1:
-                Balker ship1 = (Balker) PacificOcean.getPacificOcean()
+                Bulker ship1 = (Bulker) PacificOcean.getPacificOcean()
                         .getShipList()
                         .stream()
-                        .filter(shuttle -> shuttle instanceof Balker&& !(shuttle instanceof ContainerShip))
+                        .filter(shuttle -> shuttle instanceof Bulker && !(shuttle instanceof ContainerShip))
                         .findAny()
                         .get();
-                Balker ship2 = (Balker) PacificOcean.getPacificOcean()
+                Bulker ship2 = (Bulker) PacificOcean.getPacificOcean()
                         .getShipList()
                         .stream()
-                        .filter(shuttle -> shuttle != ship1 && shuttle instanceof Balker && !(shuttle instanceof ContainerShip))
+                        .filter(shuttle -> shuttle != ship1 && shuttle instanceof Bulker && !(shuttle instanceof ContainerShip))
                         .findAny()
                         .get();
 
@@ -332,5 +330,5 @@ public class Menu {
                     });
 
         }
-    }
+    }*/
 }

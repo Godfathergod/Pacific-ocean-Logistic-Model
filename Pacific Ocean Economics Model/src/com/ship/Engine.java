@@ -1,13 +1,10 @@
 package com.ship;
 
-public class Engine {
-    private static final int maxEnergy = 100;
-    private static final int maxSpeed = 10;
+public class Engine implements Cloneable{
+    public static final int maxSpeed = 10;
     private int speed;
-    private int energy;
-    public Engine(int speed,int energy) {
+    public Engine(int speed) {
         this.speed = speed;
-        this.energy = energy;
     }
 
     public int getSpeed() {
@@ -18,11 +15,13 @@ public class Engine {
         this.speed = speed;
     }
 
-    public int getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(int energy) {
-        this.energy = energy;
+    @Override
+    public Engine clone() {
+        try {
+            Engine clone = (Engine) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
