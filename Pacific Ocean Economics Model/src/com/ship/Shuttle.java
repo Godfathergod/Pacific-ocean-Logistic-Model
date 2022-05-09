@@ -122,10 +122,12 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
                 rand.nextInt(50,250),
                 rand.nextInt(75,300),
                 City.getAllCities()
-                        .get(rand.nextInt(City.getAllCities().size())));
+                        .stream()
+                        .findAny().get());
         if(!rand.nextBoolean()) {
             this.stayInCity(City.getAllCities()
-                    .get(rand.nextInt(City.getAllCities().size())));
+                    .stream()
+                    .findAny().get());
         }
         if (parkingCity == null){
             setShipX(rand.nextInt(415,3100));
@@ -206,8 +208,8 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         //пошук міста з найменшою кількістю вантажу за типом міста
         return City.getAllCities()
                 .stream()
-                .filter(city -> city.getCityType() == type && city.getCargoWeight() < 100)
-                .findAny().get();
+                .filter(city -> city.getCityType() == type)
+                .min((c1,c2) -> (int) (c1.getCargoWeight() - c2.getCargoWeight())).get();
     }
     public void stayInCity(City city){
         city.addShip(this);

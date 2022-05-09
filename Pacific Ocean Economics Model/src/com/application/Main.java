@@ -10,15 +10,17 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.ParallelCamera;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -32,11 +34,6 @@ import java.util.*;
 public class Main extends Application {
     public Main() throws IOException {
     }
-
-    public static void main(String[] args) {
-        launch();
-    }
-
     Image universalImg = new Image("img/map/minimap1.png");
     Image macroObjectImg = new Image("img/factorycity.png");
     Image shuttleImg = new Image("img/shuttle.png");
@@ -44,10 +41,9 @@ public class Main extends Application {
     Image containerShipImg = new Image("img/containership.png");
     Image materialImg = new Image("img/materials.png");
     Image productionImg = new Image("img/production.png");
-
+    //stage elements
     AnchorPane root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Model.fxml")));
     Scene scene = new Scene(root);
-
     ScrollPane scrollPane = (ScrollPane) root.getChildren().get(0);
     AnchorPane field = (AnchorPane) scrollPane.getContent();
     MenuBar menuBar = (MenuBar) root.getChildren().get(1);
@@ -55,18 +51,16 @@ public class Main extends Application {
     Label shipCounter = (Label) labels.getChildren().get(0);
     Label cargoCounter = (Label) labels.getChildren().get(1);
     Label mousePos = (Label) labels.getChildren().get(2);
-    //minimap
     AnchorPane minimap = (AnchorPane) root.getChildren().get(3);
     private final double SCALE = 0.1;
-    //
+    //universal object
     Rectangle map = new Rectangle(3225,2711);
     AnchorPane test = new AnchorPane();//new Rectangle(80.625,67.775);
-
     //cities
-    Map<City,BorderPane> cityGraphics = new TreeMap<>();
+    Map<City,BorderPane> cityGraphics = new HashMap<>();
     //ships
-    Map<Shuttle, AnchorPane> shipPositions = new TreeMap<>();
-    Random a = new Random(1232465);
+    Map<Shuttle, AnchorPane> shipPositions = new HashMap<>();
+    Map<Shuttle,Rectangle> shipsOnMinimap = new HashMap<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -75,17 +69,30 @@ public class Main extends Application {
         stage.setFullScreen(true);
         stage.setMinHeight(800);
         stage.setMinWidth(1000);
-
-        //налаштування видимого екрану
-
         scrollPane.setPrefHeight(Screen.getPrimary().getOutputScaleY());
         scrollPane.setPrefWidth(Screen.getPrimary().getOutputScaleX());
-
         field.getChildren().add(map);
         field.getChildren().add(test);
-
-        /////////////////////////////////
-
+        ////minimap
+        minimap.setPrefWidth(map.getWidth() * SCALE);
+        minimap.setPrefHeight(map.getHeight() * SCALE);
+        minimap.setLayoutX(1213);
+        Rectangle miniWorld = (Rectangle) minimap.getChildren().get(0);
+        miniWorld.setOnMouseClicked(event -> {
+            scrollPane.setHvalue(event.getX()/SCALE/map.getWidth());
+            scrollPane.setVvalue(event.getY()/SCALE/map.getHeight());
+        });
+        miniWorld.setWidth(minimap.getPrefWidth());
+        miniWorld.setHeight(minimap.getPrefHeight());
+        miniWorld.setFill(new ImagePattern(universalImg));
+        Rectangle2D screen = Screen.getPrimary().getBounds();
+        Rectangle visibleArea = new Rectangle(screen.getWidth() * SCALE,screen.getHeight() * SCALE);
+        visibleArea.setFill(Color.TRANSPARENT);
+        visibleArea.setStroke(Color.BLACK);
+        visibleArea.setLayoutX(scrollPane.getHvalue()*map.getWidth()*SCALE+visibleArea.getWidth()/2);
+        visibleArea.setLayoutY(scrollPane.getVvalue()*map.getHeight()*SCALE+visibleArea.getHeight()/2);
+        minimap.getChildren().add(visibleArea);
+        //universal object
         map.setFill(new ImagePattern(universalImg));
         Rectangle a = new Rectangle(80.625,67.775);
         a.setFill(new ImagePattern(shuttleImg));
@@ -93,23 +100,6 @@ public class Main extends Application {
         test.getChildren().add(r);
         test.getChildren().add(a);
         test.getChildren().add(new Label("Ship"));
-        test.setOnMouseClicked(mouseEvent -> {
-            Shuttle ship = null;
-            switch (new Random().nextInt(1,4)){
-                case 1:
-                    ship = new Shuttle();
-                    break;
-                case 2:
-                    ship = new Bulker();
-                    break;
-                case 3:
-                    ship = new ContainerShip();
-            }
-            AnchorPane anchorPane = drawShip(ship);
-            shipPositions.put(ship,anchorPane);
-            field.getChildren().add(anchorPane);
-            ship.automaticLife();
-        });
 
         root.setOnKeyPressed((keyEvent -> {
             switch (keyEvent.getCode()){
@@ -127,12 +117,12 @@ public class Main extends Application {
                 }
             }
         }));
-        //root listeners
+        //eventlisteners
         root.setOnMouseClicked(mouseEvent -> {
-            mousePos.setText("X: " + (mouseEvent.getX() +  scrollPane.getLayoutX()) + " Y: " + (mouseEvent.getY() + scrollPane.getLayoutY()));
+            //mousePos.setText("V: " + scrollPane. + " Y: " + (mouseEvent.getY() + scrollPane.getLayoutY()));
         });
 
-        // прорисовка міст
+        //CITIES
         PacificOcean.getPacificOcean().getAllCities()
                 .stream()
                         .forEach(city -> {
@@ -167,9 +157,16 @@ public class Main extends Application {
                             borderPane.setLayoutX(city.getMapX());
                             borderPane.setLayoutY((city.getMapY()));
                             cityGraphics.put(city,borderPane);
+                            field.getChildren().add(borderPane);
                         });
-        cityGraphics.forEach((city,pane) -> field.getChildren().add(pane));
-        //прорисовка кораблів
+        PacificOcean.getPacificOcean().getAllCities().forEach(city -> {
+            Rectangle spot = new Rectangle(5,5);
+            spot.setFill(Color.RED);
+            spot.setLayoutX(city.getMapX() * SCALE);
+            spot.setLayoutY(city.getMapY() * SCALE);
+            minimap.getChildren().add(spot);
+        });
+        //SHIPS
         PacificOcean.getPacificOcean().getShipList()
                 .forEach(ship -> {
                     Label name = new Label(ship.getName());
@@ -187,19 +184,41 @@ public class Main extends Application {
                     anchorPane.setLayoutY(ship.getShipY());
                     shipPositions.put(ship,anchorPane);
                 });
-        ////minimap
-        minimap.setPrefWidth(field.getPrefWidth() * SCALE);
-        minimap.setPrefHeight(field.getPrefHeight() * SCALE);
-        Rectangle miniWorld = (Rectangle) minimap.getChildren().get(0);
-        miniWorld.setWidth(field.getPrefWidth() * SCALE);
-        miniWorld.setHeight(field.getPrefHeight() * SCALE);
-        miniWorld.setFill(Paint.valueOf("red"));
-        minimap.setVisible(true);
+
+        PacificOcean.getPacificOcean().getShipList().forEach(ship -> {
+            Rectangle spot = new Rectangle(3,3);
+            spot.setFill(Color.BLACK);
+            spot.setLayoutX(ship.getShipX() * SCALE);
+            spot.setLayoutY(ship.getShipY() * SCALE);
+            shipsOnMinimap.put(ship,spot);
+            minimap.getChildren().add(spot);
+        });
         //////////////////////////////stage
+        test.setOnMouseClicked(mouseEvent -> {
+            Shuttle ship = null;
+            switch (new Random().nextInt(1,4)){
+                case 1:
+                    ship = new Shuttle();
+                    break;
+                case 2:
+                    ship = new Bulker();
+                    break;
+                case 3:
+                    ship = new ContainerShip();
+            }
+            AnchorPane anchorPane = drawShip(ship);
+            shipPositions.put(ship,anchorPane);
+            Rectangle miniShip = new Rectangle(3,3);
+            miniShip.setFill(Color.BLACK);
+            shipsOnMinimap.put(ship,miniShip);
+            field.getChildren().add(anchorPane);
+            minimap.getChildren().add(miniShip);
+            ship.automaticLife();
+        });
         stage.getIcons().add(new Image("/img/icon.png"));
         stage.setTitle("Pacific Logistics Model");
+        stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("ALT+ENTER"));
         stage.sizeToScene();
-        test.toFront();
         ///animationTimer
         AnimationTimer mainTimer = new AnimationTimer() {
             @Override
@@ -220,23 +239,28 @@ public class Main extends Application {
                         Label temp = new Label(ship.getName());
                         info.getChildren().add(temp);
                     });
-                    shipPositions.forEach((ship,pane) -> {
-                        if(ship.getParkingCity() == null){
-                            pane.setVisible(true);
-                        } else {
-                            pane.setVisible(false);
-                        }
-
-                    });
-                    shipPositions.forEach((ship,pane) -> {
-                        pane.setLayoutX(ship.getShipX());
-                        pane.setLayoutY(ship.getShipY());
-                    });
+                });
+                shipPositions.forEach((ship,pane) -> {
+                    if(ship.getParkingCity() == null){
+                        pane.setVisible(true);
+                    } else {
+                        pane.setVisible(false);
+                    }
 
                 });
+                shipPositions.forEach((ship,pane) -> {
+                    pane.setLayoutX(ship.getShipX());
+                    pane.setLayoutY(ship.getShipY());
+                });
+                shipsOnMinimap.forEach((ship,spot) -> {
+                    spot.setLayoutX(ship.getShipX() * SCALE);
+                    spot.setLayoutY(ship.getShipY() * SCALE);
+                });
+                visibleArea.setLayoutX(scrollPane.getHvalue() * map.getWidth() * SCALE - (scrollPane.getHvalue() * visibleArea.getWidth()));
+                visibleArea.setLayoutY(scrollPane.getVvalue() * map.getHeight() * SCALE - (scrollPane.getVvalue() * visibleArea.getHeight()));
+                mousePos.setText("V: " + scrollPane.getVvalue() + " H: " + scrollPane.getHvalue());
             }
         };
-
         mainTimer.start();
         stage.show();
     }
@@ -265,5 +289,8 @@ public class Main extends Application {
         anchorPane.setLayoutY(ship.getShipY());
         anchorPane.setLayoutX(ship.getShipX());
         return anchorPane;
+    }
+    public static void main(String[] args) {
+        launch();
     }
 }

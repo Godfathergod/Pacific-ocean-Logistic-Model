@@ -6,7 +6,7 @@ import java.util.*;
 
 public class City implements Cloneable,Comparable<City>{
 
-   private final static List<City> allCities;
+   private final static Set<City> allCities;
    private final String name;
    private  LocationType cityType;
    private  Size citySize;
@@ -70,7 +70,7 @@ public class City implements Cloneable,Comparable<City>{
       return shipsOnParking;
    }
 
-   public static List<City> getAllCities() {
+   public static Set<City> getAllCities() {
       return allCities;
    }
 
@@ -120,7 +120,7 @@ public class City implements Cloneable,Comparable<City>{
    ///
 
    static {
-      allCities = List.of(new City("Владивосток",LocationType.MATERIALBASE,Size.SMALL,412,725),
+      allCities = new HashSet<>(Set.of(new City("Владивосток",LocationType.MATERIALBASE,Size.SMALL,412,725),
               new City("Пусан",LocationType.FACTORY,Size.MEDIUM,330,875),
               new City("Токіо",LocationType.FACTORY,Size.LARGE,580,900),
               new City("Шанхай",LocationType.FACTORY,Size.LARGE,215,985),
@@ -135,7 +135,7 @@ public class City implements Cloneable,Comparable<City>{
               new City("Панама",LocationType.FACTORY,Size.SMALL,3000,1430),
               new City("Лос-Анджелес",LocationType.CITYCONSUMER,Size.LARGE,2275,950),
               new City("Сан-Франциско",LocationType.CITYCONSUMER,Size.LARGE,2230,800),
-              new City("Анкорідж",LocationType.MATERIALBASE,Size.MEDIUM,1775,275));
+              new City("Анкорідж",LocationType.MATERIALBASE,Size.MEDIUM,1775,275)));
    }
    private City(String name,LocationType type,Size size,double x, double y){
       this.name = name;

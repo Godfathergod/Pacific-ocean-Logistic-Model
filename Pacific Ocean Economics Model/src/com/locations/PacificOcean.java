@@ -3,6 +3,7 @@ package com.locations;
 import com.ship.Shuttle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class PacificOcean {
     private static final PacificOcean universalObject = new PacificOcean();
@@ -11,7 +12,7 @@ public class PacificOcean {
     }
     private PacificOcean(){}
 
-    private List<City> allCities = City.getAllCities();
+    private Set<City> allCities = City.getAllCities();
     private List<Shuttle> shuttleList = new ArrayList<>();
 
     public void addShip(Shuttle sh) {
@@ -22,7 +23,7 @@ public class PacificOcean {
         shuttleList.remove(sh);
     }
 
-    public List<City> getAllCities() {
+    public Set<City> getAllCities() {
         return allCities;
     }
 
