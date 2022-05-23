@@ -35,7 +35,7 @@ public class Bulker extends Shuttle {
 
         ++numOfBulkers;
     }
-    @Override
+    /*@Override
     public void automaticLife() {
         this.autoLife = new Thread(() -> {
             while (!Thread.interrupted()) {
@@ -50,7 +50,7 @@ public class Bulker extends Shuttle {
                     if(Thread.interrupted()) break;
                     gain();
                 }
-               /*synchronized(this){
+               *//*synchronized(this){
                     if (rand.nextBoolean()) {
                         int size = (int) PacificOcean.getPacificOcean().getShipList().size();
                         Object[] objectsArray = PacificOcean.getPacificOcean().getShipList().toArray();
@@ -78,7 +78,7 @@ public class Bulker extends Shuttle {
                         targetShip.targetCity = findCityforUngain(targetShip.getCargoType());
                         if(!targetShip.isActive())targetShip.automaticLife();
                     }
-                }*/
+                }*//*
                 switch (this.getCargoType()) {
                     case MATERIALS -> {
                         moveTo(findCityforUngain(CargoType.MATERIALS));
@@ -95,7 +95,7 @@ public class Bulker extends Shuttle {
         autoLife.setDaemon(true);
         autoLife.setName("Thread " + this.getName());
         autoLife.start();
-    }
+    }*/
     public void exChangeWithShip(Bulker ship, double cargo) {
         new ShipTransfer(this,ship,cargo).start();
     }
@@ -108,7 +108,7 @@ public class Bulker extends Shuttle {
                 ",capacity=" + this.getCapacity() +
                 ", shipX=" + shipX +
                 ", shipY=" + shipY +
-                ", autoLife=" + autoLife +
+                //", autoLife=" + autoLife +
                 ", shipImg=" + shipImg +
                 ", flagImg=" + flagImg +
                 ", targetCity=" + targetCity +

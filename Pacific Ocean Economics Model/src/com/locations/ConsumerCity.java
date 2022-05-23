@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ConsumerCity extends City{
     private double productionWeight = 1000;
-    private static Set<ConsumerCity> consumerCities;
+    private static final Set<ConsumerCity> consumerCities;
     private ConsumerCity(String name,Size size,double x, double y){
         super();
         this.name = name;
@@ -35,7 +35,7 @@ public class ConsumerCity extends City{
         return consumerCities;
     }
 
-    @Override
+    /*@Override
     public void gainShip(Shuttle ship, double cargo) {
         throw new UnsupportedOperationException();
     }
@@ -52,5 +52,5 @@ public class ConsumerCity extends City{
         productionWeight += cargo;
         PacificOcean.getPacificOcean().setTotalCargoWeight(PacificOcean.getPacificOcean().getTotalCargoWeight() - cargo);
         shuttle.setCargoWeight(shuttle.getCargoWeight() - cargo);
-    }
+    }*/
 }

@@ -4,6 +4,7 @@ import com.locations.*;
 import com.ship.Bulker;
 import com.ship.ContainerShip;
 import com.ship.Shuttle;
+import com.utils.CargoType;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -149,7 +150,6 @@ public class Main extends Application {
             shipsOnMinimap.put(ship, miniShip);
             field.getChildren().add(anchorPane);
             minimap.getChildren().add(miniShip);
-            ship.automaticLife();
             newShip.toBack();
         });
         ////minimap
@@ -207,7 +207,6 @@ public class Main extends Application {
                     shipsOnMinimap.put(ship, miniShip);
                     field.getChildren().add(anchorPane);
                     minimap.getChildren().add(miniShip);
-                    ship.automaticLife();
                 }
                 case W -> PacificOcean.getPacificOcean().getShipList()
                         .stream()
@@ -253,7 +252,6 @@ public class Main extends Application {
                         ship.setActive(false);
                         Rectangle flag = (Rectangle) pane.getChildren().get(3);
                         flag.setVisible(false);
-                        ship.automaticLife();
                     }
 
                 });
@@ -263,7 +261,6 @@ public class Main extends Application {
                         .filter(Shuttle::isActive)
                         .forEach(ship -> {
                             ship.setDeleted(true);
-                            ship.getAutoLife().interrupt();
                             PacificOcean.getPacificOcean().setTotalCargoWeight(PacificOcean.getPacificOcean().getTotalCargoWeight()-ship.getCargoWeight());
                             PacificOcean.getPacificOcean().getShipList().remove(ship);
                         });
@@ -369,6 +366,23 @@ public class Main extends Application {
             public void handle(long l) {
                 shipCounter.setText("Кількість кораблів в океані: " + PacificOcean.getPacificOcean().getShipList().size());
                 cargoCounter.setText("Вага вантажу в океані: " +  PacificOcean.getPacificOcean().getTotalCargoWeight());
+                if(l % 100 == 0) {
+                    PacificOcean.getPacificOcean().getShipList().forEach(shuttle -> {
+                        if (shuttle.isOnUngain()) {
+                            shuttle.ungain();
+                        } else if (shuttle.isOnGain()) {
+                            shuttle.gain();
+                        } else if (shuttle.getCargoType() == CargoType.NONE) {
+                            if (shuttle.getTargetCity() == null) shuttle.setTargetCity(Shuttle.findMaxCargoCity());
+                            shuttle.moveTo(shuttle.getTargetCity());
+                            shuttle.gain();
+                        } else if (shuttle.getCargoWeight() == shuttle.getCapacity()) {
+                            if(shuttle.getTargetCity() == null) shuttle.setTargetCity(Shuttle.findCityforUngain(shuttle.getCargoType()));
+                            shuttle.moveTo(shuttle.getTargetCity());
+                            shuttle.ungain();
+                        }
+                    });
+                }
                 cityGraphics.forEach((city, borderPane) -> {
                     FlowPane parking = (FlowPane) borderPane.getChildren().get(2);
                     parking.getChildren().clear();

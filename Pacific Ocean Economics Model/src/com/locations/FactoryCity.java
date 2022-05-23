@@ -9,7 +9,7 @@ import java.util.Set;
 public class FactoryCity extends City{
     private double materialsWeight = 1000;
     private double productionWeight = 1000;
-    private static Set<FactoryCity> factoryCities;
+    private static final Set<FactoryCity> factoryCities;
     private FactoryCity(String name,Size size,double x, double y){
         super();
         this.name = name;
@@ -40,7 +40,7 @@ public class FactoryCity extends City{
     public static Set<FactoryCity> getFactoryCities() {
         return factoryCities;
     }
-    public void gainShip(Shuttle shuttle, double cargo){
+/*    public void gainShip(Shuttle shuttle, double cargo){
         while(materialsWeight < cargo){
             try {
                 Thread.sleep(1000);
@@ -71,5 +71,5 @@ public class FactoryCity extends City{
         materialsWeight += cargo;
         PacificOcean.getPacificOcean().setTotalCargoWeight(PacificOcean.getPacificOcean().getTotalCargoWeight() - cargo);
         shuttle.setCargoWeight(shuttle.getCargoWeight() - cargo);
-    }
+    }*/
 }

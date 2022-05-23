@@ -23,11 +23,14 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     protected double shipY;
     private boolean isDeleted;
     private boolean isActive;
+    private boolean onGain;
+    private boolean onUngain;
     private static boolean activeWork;
-    protected Thread autoLife;
+    protected City targetCity;
     protected static int maxWeight = 250;
     protected Image shipImg = new Image("img/shuttle.png");
     protected Image flagImg = new Image("img/flag.png");
+
     {
         isDeleted = false;
         isActive = false;
@@ -37,6 +40,30 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     }
 
     //геттери та сеттери
+
+    public boolean isOnUngain() {
+        return onUngain;
+    }
+
+    public void setOnUngain(boolean onUngain) {
+        this.onUngain = onUngain;
+    }
+
+    public boolean isOnGain() {
+        return onGain;
+    }
+
+    public void setOnGain(boolean onGain) {
+        this.onGain = onGain;
+    }
+
+    public City getTargetCity() {
+        return targetCity;
+    }
+
+    public void setTargetCity(City targetCity) {
+        this.targetCity = targetCity;
+    }
 
     public static boolean isActiveWork() {
         return activeWork;
@@ -102,10 +129,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         isActive = active;
     }
 
-    public Thread getAutoLife() {
-        return autoLife;
-    }
-
     public void setCargoWeight(double cargoWeight) {
         if(cargoWeight < 0 || cargoWeight > capacity) {
             System.out.println("Недопустима вага вантажу.");
@@ -167,38 +190,11 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         }
     }
     //функції життєдіяльності об'єкта
-    protected City targetCity = null;
-    public void automaticLife() {
-        this.autoLife = new Thread(() -> {
-            while(!Thread.interrupted()){
-                if(targetCity != null){
-                    moveTo(targetCity);
-                    ungain();
-                    targetCity = null;
-                }
-                moveTo(findMaxCargoCity());
-                gain();
-                switch (this.getCargoType()){
-                    case MATERIALS -> {
-                        moveTo(findCityforUngain(CargoType.MATERIALS));
-                        ungain();
-                    }
-                    case PRODUCTION -> {
-                        moveTo((findCityforUngain(CargoType.PRODUCTION)));
-                        ungain();
-                    }
-                }
-            }
-        });
-        autoLife.setDaemon(true);
-        autoLife.setName("Thread " + this.name);
-        autoLife.start();
-    }
+
+
     public void moveTo(City city){
             leaveCity();
-            final double k = 0.3;
-         while(!(this.getShipX() < city.getMapX()+50 && this.getShipX() > city.getMapX()-50
-                 && this.getShipY() < city.getMapY()+50 && this.getShipY() > city.getMapY()-50)) {
+            final double k = 0.1;
              if(this.getShipX() < city.getMapX()-25){
                  this.shipX += engine.getSpeed() * k;
              } else if(this.getShipX() > city.getMapX()+25){
@@ -209,21 +205,15 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
              } else if(this.getShipY() > city.getMapY()+25){
                  this.shipY -= engine.getSpeed() * k;
              }
-             try {
-                 Thread.sleep(10);
-             } catch (InterruptedException ignored) {
-                 targetCity = city;
-                 Thread.currentThread().interrupt();
+             if(shipX < city.getMapX() + 50 && shipX > city.getMapX() - 50
+             && shipY < city.getMapY() + 50 && shipY > city.getMapY() - 50){
+                 stayInCity(city);
+                 targetCity = null;
              }
-             if(Thread.currentThread().isInterrupted()) return;
-         }
-         stayInCity(city);
     }
     public void moveTo(Shuttle shuttle){
         leaveCity();
         final double k = 0.3;
-        while(!(this.getShipX() < shuttle.getShipX()+20 && this.getShipX() > shuttle.getShipX()-20
-                && this.getShipY() < shuttle.getShipY()+20 && this.getShipY() > shuttle.getShipY()-20)) {
             if(this.getShipX() < shuttle.getShipX()+10){
                 this.shipX += engine.getSpeed() * k;
             } else if(this.getShipX() > shuttle.getShipX()-10){
@@ -234,13 +224,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
             } else if(this.getShipY() > shuttle.getShipY()-10){
                 this.shipY -= engine.getSpeed() * k;
             }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-            }
-            if(Thread.currentThread().isInterrupted()) return;
-        }
     }
     public static City findMaxCargoCity() {
         City result;
@@ -275,7 +258,6 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
     public void stayInCity(City city){
         city.addShip(this);
         parkingCity = city;
-        //System.out.println(this.getName() + " прибув до " + city + this.getCargoWeight() + " " + this.cargoType);
 
     }
     public void leaveCity(){
@@ -283,52 +265,37 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
             this.parkingCity.deleteShip(this);
         }catch (NullPointerException ignored){}
         parkingCity = null;
-        //System.out.println(this.getName() + " покинув " + city + this.getCargoWeight() + " " + this.cargoType);
     }
     public void gain(){
-        if(parkingCity == null){
-            moveTo(findMaxCargoCity());
-        } else if(parkingCity instanceof MaterialBaseCity){
-            while(cargoWeight != capacity && ((MaterialBaseCity) parkingCity).getMaterialsWeight() > 10){
-                try {
-                    parkingCity.gainShip(this,10);
-                } catch (UnsupportedOperationException ignored) {}
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {}
-            }
-        } else {
-            while (cargoWeight != capacity && ((FactoryCity) parkingCity).getProductionWeight() > 10) {
-                try {
-                    parkingCity.gainShip(this, 10);
-                } catch (UnsupportedOperationException ignored) {
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {
-                }
-            }
+        if(parkingCity == null) return;
+        onGain = true;
+        double cargo = 1;
+        if(parkingCity instanceof MaterialBaseCity){
+             cargoType = CargoType.MATERIALS;
+             if(((MaterialBaseCity) parkingCity).getMaterialsWeight()  < 5) return;
+            ((MaterialBaseCity) parkingCity).setMaterialsWeight(((MaterialBaseCity) parkingCity).getMaterialsWeight() - cargo);
+        } else if (parkingCity instanceof FactoryCity){
+            if(((FactoryCity) parkingCity).getProductionWeight() < 5) return;
+            cargoType = CargoType.PRODUCTION;
+            ((FactoryCity) parkingCity).setProductionWeight(((FactoryCity) parkingCity).getProductionWeight() - cargo);
         }
+        this.cargoWeight += cargo;
+        if(cargoWeight == capacity)onGain = false;
     }
     public void ungain(){
-        if(parkingCity == null){
-            moveTo(findCityforUngain(this.getCargoType()));
+        if(parkingCity == null) return;
+        onUngain = true;
+        double cargo = 1;
+        if (parkingCity instanceof FactoryCity){
+            ((FactoryCity) parkingCity).setProductionWeight(((FactoryCity) parkingCity).getProductionWeight() + cargo);
         } else {
-            while(cargoWeight != 0){
-                try {
-                    parkingCity.ungainShip(this,10);
-                } catch (NullPointerException | UnsupportedOperationException e) {
-                   // System.out.println("A");
-                    moveTo(findCityforUngain(this.cargoType));
-                    ungain();
-                    return;
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ignored) {}
-            }
+            ((ConsumerCity)parkingCity).setProductionWeight(((ConsumerCity) parkingCity).getProductionWeight() + cargo);
         }
-
+        this.cargoWeight -= cargo;
+        if(cargoWeight == 0) {
+            cargoType = CargoType.NONE;
+            onUngain = false;
+        }
     }
     public AnchorPane drawShip(){
         Label name = new Label(this.getName());
@@ -353,7 +320,7 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
         AnchorPane anchorPane = new AnchorPane(img,cargo,name,flag);
         anchorPane.setLayoutY(this.getShipY());
         anchorPane.setLayoutX(this.getShipX());
-        anchorPane.setOnMouseClicked(mouseEvent -> {
+       /* anchorPane.setOnMouseClicked(mouseEvent -> {
             if(this.isActive()){
                 this.setActive(false);
                 flag.setVisible(false);
@@ -364,7 +331,7 @@ public class Shuttle implements Cloneable, Comparable<Shuttle>{
                 flag.setVisible(true);
                 this.getAutoLife().interrupt();
             }
-        });
+        });*/
         return anchorPane;
     }
     //базові функції Object

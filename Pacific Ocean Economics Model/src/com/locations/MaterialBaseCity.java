@@ -1,13 +1,10 @@
 package com.locations;
 
-import com.ship.Shuttle;
-import com.utils.CargoType;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class MaterialBaseCity extends City{
-    private double materialsWeight = 1000;
+    private double materialsWeight = 10000;
     private static final Set<MaterialBaseCity> materialBases;
     private MaterialBaseCity(String name,Size size,double x, double y){
         super();
@@ -36,7 +33,7 @@ public class MaterialBaseCity extends City{
     public static Set<MaterialBaseCity> getMaterialBases() {
         return materialBases;
     }
-    public void gainShip(Shuttle shuttle, double cargo){
+   /* public void gainShip(Shuttle shuttle, double cargo){
         while(materialsWeight < cargo){
            try {
                 Thread.sleep(1000);
@@ -59,6 +56,6 @@ public class MaterialBaseCity extends City{
     @Override
     public void ungainShip(Shuttle ship, double cargo) {
         throw new UnsupportedOperationException();
-    }
+    }*/
 
 }

@@ -50,8 +50,8 @@ public abstract class City implements Cloneable,Comparable<City>{
    public double getMapY() {
       return mapY;
    }
-   public abstract void gainShip(Shuttle ship, double cargo);
-   public abstract void ungainShip(Shuttle ship, double cargo);
+/*   public abstract void gainShip(Shuttle ship, double cargo);
+   public abstract void ungainShip(Shuttle ship, double cargo);*/
    @Override
    public int compareTo(City o) {
       return this.getName().compareTo(o.getName());
