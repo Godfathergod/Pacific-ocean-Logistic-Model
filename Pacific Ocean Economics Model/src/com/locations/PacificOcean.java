@@ -4,6 +4,7 @@ import com.ship.Shuttle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PacificOcean {
     private static final PacificOcean universalObject = new PacificOcean();
@@ -11,16 +12,12 @@ public class PacificOcean {
         return universalObject;
     }
     private PacificOcean(){}
-
-    private Set<City> allCities = City.getAllCities();
-    private List<Shuttle> shuttleList = new ArrayList<>();
+    private final Set<City> allCities = City.getAllCities();
+    private final List<Shuttle> shuttleList = new CopyOnWriteArrayList<>();
+    private double totalCargoWeight = 0;
 
     public void addShip(Shuttle sh) {
         shuttleList.add(sh);
-    }
-
-    public void deleteShip(Shuttle sh) {
-        shuttleList.remove(sh);
     }
 
     public Set<City> getAllCities() {
@@ -31,5 +28,11 @@ public class PacificOcean {
         return shuttleList;
     }
 
+    public double getTotalCargoWeight() {
+        return totalCargoWeight;
+    }
 
+    public void setTotalCargoWeight(double totalCargoWeight) {
+        this.totalCargoWeight = totalCargoWeight;
+    }
 }

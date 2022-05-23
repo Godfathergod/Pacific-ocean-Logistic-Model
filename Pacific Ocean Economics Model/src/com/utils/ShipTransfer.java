@@ -1,4 +1,4 @@
-package com.actions;
+package com.utils;
 
 import com.ship.Bulker;
 
@@ -13,6 +13,7 @@ public class ShipTransfer {
         }
         giver.setCargoWeight(giver.getCargoWeight() - this.cargo);
         receiver.setCargoWeight(receiver.getCargoWeight() + this.cargo);
+        receiver.setCargoType(giver.getCargoType());
         System.out.println(giver.getName() + " передав " + this.cargo + " об'єкту " + receiver.getName());
         isExecuted = true;
     }

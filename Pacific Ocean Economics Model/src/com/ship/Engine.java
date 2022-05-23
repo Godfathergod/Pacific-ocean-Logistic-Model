@@ -18,8 +18,7 @@ public class Engine implements Cloneable{
     @Override
     public Engine clone() {
         try {
-            Engine clone = (Engine) super.clone();
-            return clone;
+            return (Engine) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

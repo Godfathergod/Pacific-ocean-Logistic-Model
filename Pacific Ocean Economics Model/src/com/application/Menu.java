@@ -1,14 +1,6 @@
 package com.application;
 
-import com.actions.ShipTransfer;
-import com.locations.City;
-import com.locations.PacificOcean;
-import com.ship.Bulker;
-import com.ship.ContainerShip;
-import com.ship.Shuttle;
-
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Menu {
     private final Scanner scan = new Scanner(System.in);
